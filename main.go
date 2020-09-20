@@ -5,7 +5,7 @@ import (
 	//"io/ioutil"
 	"os"
 	//"path"
-	//"path/filepath"
+	"path/filepath"
 	"regexp"
 )
 
@@ -39,14 +39,28 @@ func Replace(Find string, Replace string, Search string) string {
 
 	return output
 }
+
+func RenameFolderFiles(path string, PatternToReplace string, ReplacemntPattern string) {
+
+	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() == false {
+			// rename iff is file not directory
+			fmt.Printf("File %s renamed to %s\n", info.Name(), Replace(PatternToReplace, ReplacemntPattern, info.Name()))
+			/*os.Rename(info.Name(), Replace(PatternToReplace, ReplacemntPattern, info.Name())) */
+		}
+		return nil
+	})
+
+}
+
 func main() {
-	var searchstr string
-	var replacestr string
-	var regexstr string
-	searchstr = os.Args[1]
-	replacestr = os.Args[3]
-	regexstr = os.Args[2]
-	fmt.Println("Search string : %s and replace %s with %s", searchstr, regexstr, replacestr)
-	fmt.Println("Return :: ")
-	fmt.Printf(Replace(regexstr, replacestr, searchstr))
+
+	var SearchDirectory = os.Args[1]
+	var SearchString = os.Args[2]
+	var ReplaceString = os.Args[3]
+
+	fmt.Printf("Search directory : %s\n", SearchDirectory)
+	fmt.Printf("Search String : %s to be replaced with : %s \n", SearchString, ReplaceString)
+
+	RenameFolderFiles(SearchDirectory, SearchString, ReplaceString)
 }
